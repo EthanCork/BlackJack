@@ -27,7 +27,7 @@ export default function Card({ card, index = 0 }: CardProps) {
 
   return (
     <div
-      className="relative w-16 h-24 sm:w-20 sm:h-28 md:w-24 md:h-36"
+      className="relative w-14 h-20 sm:w-16 sm:h-24 md:w-20 md:h-28 lg:w-24 lg:h-36"
       style={{
         animationDelay: `${index * 100}ms`,
       }}

@@ -33,18 +33,18 @@ export default function Hand({
   };
 
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className="flex flex-col items-center gap-2 sm:gap-3">
       {/* Label and Value */}
-      <div className="flex items-center gap-3">
-        <span className="text-sm sm:text-base md:text-lg font-semibold text-casino-gold uppercase tracking-wider">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <span className="text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-casino-gold uppercase tracking-wider">
           {label}
         </span>
         {showValue && cards.length > 0 && (
-          <div className="px-3 py-1 bg-black/40 rounded-full border border-casino-gold-dark">
-            <span className="text-sm sm:text-base md:text-lg font-bold text-white">
+          <div className="px-2 sm:px-3 py-0.5 sm:py-1 bg-black/40 rounded-full border border-casino-gold-dark">
+            <span className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-white">
               {handValue.value}
               {handValue.soft && (
-                <span className="text-xs ml-1 text-casino-gold-light">soft</span>
+                <span className="text-[10px] sm:text-xs ml-1 text-casino-gold-light">soft</span>
               )}
             </span>
           </div>
@@ -52,7 +52,7 @@ export default function Hand({
       </div>
 
       {/* Cards */}
-      <div className={`flex gap-1 sm:gap-2 ${getOutcomeClass()}`}>
+      <div className={`flex gap-1 sm:gap-1.5 md:gap-2 ${getOutcomeClass()} flex-wrap justify-center max-w-full`}>
         {cards.map((card, index) => (
           <Card key={`${card.suit}-${card.rank}-${index}`} card={card} index={index} />
         ))}
