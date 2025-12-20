@@ -83,7 +83,8 @@ function calculateDustReward(stage: number, isVictory: boolean, runStats: RunSta
 
 interface GameStore {
   // Deck & Cards
-  deck: Card[];
+  deck: Card[]; // Player's deck
+  dealerDeck: Card[]; // Dealer's deck (used during boss fights)
   playerHand: Card[];
   dealerHand: Card[];
 
@@ -277,6 +278,7 @@ interface GameStore {
 export const useGameStore = create<GameStore>((set, get) => ({
   // Initial state
   deck: createDeck(),
+  dealerDeck: [], // Empty initially, populated for boss fights
   playerHand: [],
   dealerHand: [],
   chips: STARTING_CHIPS,
@@ -431,22 +433,29 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // Use the existing deck from state (maintain lean deck identity)
     let deck = [...get().deck];
 
+    // During boss fights, dealer draws from their own deck
+    const { bossActive, dealerDeck: bossDealerDeck, currentBoss } = get();
+    let dealerDeck = bossActive ? [...bossDealerDeck] : [...deck];
+
     // Deal initial cards
     const playerCard1 = drawCard(deck)!;
-    const dealerCard1 = drawCard(deck)!;
+    const dealerCard1 = drawCard(dealerDeck)!;
     const playerCard2 = drawCard(deck)!;
-    const dealerCard2 = drawCard(deck)!;
+    const dealerCard2 = drawCard(dealerDeck)!;
 
     playerCard1.faceUp = true;
     playerCard2.faceUp = true;
     dealerCard1.faceUp = true;
-    dealerCard2.faceUp = false;
+
+    // Boss hole card visibility rule (The House)
+    dealerCard2.faceUp = currentBoss?.holeCardVisible || false;
 
     const playerHand = [playerCard1, playerCard2];
     const dealerHand = [dealerCard1, dealerCard2];
 
     set({
       deck,
+      dealerDeck: bossActive ? dealerDeck : get().dealerDeck,
       playerHand,
       dealerHand,
       phase: 'dealing',
@@ -739,9 +748,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   // Dealer plays
   dealerPlay: async () => {
-    const { dealerHand, deck, frozenDealer, pressuredDealer } = get();
+    const { dealerHand, deck, dealerDeck: bossDealerDeck, frozenDealer, pressuredDealer, bossActive, currentBoss } = get();
 
-    // Reveal hole card (unless already revealed by Peek or Dealer's Tell)
+    // Use boss deck if in boss fight, otherwise use player deck
+    let dealerDeck = bossActive ? [...bossDealerDeck] : [...deck];
+
+    // Determine dealer stand value (boss override or default)
+    const standValue = currentBoss?.dealerStandValue || DEALER_STAND_VALUE;
+
+    // Reveal hole card (unless already revealed by Peek, Dealer's Tell, or Boss rule)
     if (!dealerHand[1].faceUp) {
       dealerHand[1].faceUp = true;
       set({ dealerHand: [...dealerHand] });
@@ -755,14 +770,30 @@ export const useGameStore = create<GameStore>((set, get) => ({
       set({ message: 'Dealer is frozen!' });
       await new Promise(resolve => setTimeout(resolve, DEALER_CARD_DELAY));
     } else {
-      // Normal dealer logic
-      while (calculateHandValue(currentHand).value < DEALER_STAND_VALUE) {
-        const card = drawCard(deck);
+      // Boss-specific dealer logic
+      const dealerValue = calculateHandValue(currentHand);
+      const shouldHitOnSoft17 = currentBoss?.dealerHitsOnSoft17 || false;
+
+      // Dealer AI: hit until reaching stand value, with soft 17 rule
+      while (true) {
+        const handVal = calculateHandValue(currentHand);
+
+        // Check if dealer should hit
+        const shouldHit = handVal.value < standValue ||
+                         (handVal.value === 17 && handVal.soft && shouldHitOnSoft17);
+
+        if (!shouldHit) break;
+
+        const card = drawCard(dealerDeck);
         if (!card) break;
 
         card.faceUp = true;
         currentHand = [...currentHand, card];
-        set({ dealerHand: currentHand, deck: [...deck] });
+        set({
+          dealerHand: currentHand,
+          dealerDeck: bossActive ? dealerDeck : bossDealerDeck,
+          deck: !bossActive ? dealerDeck : deck,
+        });
         await new Promise(resolve => setTimeout(resolve, DEALER_CARD_DELAY));
       }
 
@@ -789,6 +820,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // Resolve split hands separately
     if (get().splitState) {
+      const { bossActive, currentBoss } = get();
       const splitState = get().splitState!;
       const newOutcomes = [...splitState.outcomes] as [Outcome, Outcome];
 
@@ -804,7 +836,21 @@ export const useGameStore = create<GameStore>((set, get) => ({
         } else if (handValue > dealerValue) {
           newOutcomes[i] = 'win';
         } else {
-          newOutcomes[i] = 'push';
+          // Tie situation - check boss special rules
+          if (bossActive && currentBoss) {
+            // Pit Boss: Ties at exactly 17 = Pit Boss wins
+            if (currentBoss.tiesAt17AreLosses && handValue === 17) {
+              newOutcomes[i] = 'lose';
+            }
+            // The House: ALL ties = House wins
+            else if (currentBoss.playerPushesAreLosses) {
+              newOutcomes[i] = 'lose';
+            } else {
+              newOutcomes[i] = 'push';
+            }
+          } else {
+            newOutcomes[i] = 'push';
+          }
         }
       }
 
@@ -813,15 +859,42 @@ export const useGameStore = create<GameStore>((set, get) => ({
         message: `Hand 1: ${newOutcomes[0]} | Hand 2: ${newOutcomes[1]}`,
       });
     } else {
+      const { bossActive, currentBoss } = get();
+      let outcome: Outcome = null;
+      let message = '';
+
       if (dealerBust) {
-        set({ outcome: 'win', message: 'Dealer busts! You win!' });
+        outcome = 'win';
+        message = 'Dealer busts! You win!';
       } else if (dealerValue > playerValue) {
-        set({ outcome: 'lose', message: `Dealer wins with ${dealerValue}.` });
+        outcome = 'lose';
+        message = `Dealer wins with ${dealerValue}.`;
       } else if (playerValue > dealerValue) {
-        set({ outcome: 'win', message: `You win with ${playerValue}!` });
+        outcome = 'win';
+        message = `You win with ${playerValue}!`;
       } else {
-        set({ outcome: 'push', message: `Push at ${playerValue}.` });
+        // Tie situation - check boss special rules
+        if (bossActive && currentBoss) {
+          // Pit Boss: Ties at exactly 17 = Pit Boss wins
+          if (currentBoss.tiesAt17AreLosses && playerValue === 17) {
+            outcome = 'lose';
+            message = `Veteran's Patience! Tie at 17 = ${currentBoss.name} wins!`;
+          }
+          // The House: ALL ties = House wins
+          else if (currentBoss.playerPushesAreLosses) {
+            outcome = 'lose';
+            message = `House Edge! Tie at ${playerValue} = ${currentBoss.name} wins!`;
+          } else {
+            outcome = 'push';
+            message = `Push at ${playerValue}.`;
+          }
+        } else {
+          outcome = 'push';
+          message = `Push at ${playerValue}.`;
+        }
       }
+
+      set({ outcome, message });
     }
 
     get().resolveHand();
@@ -856,6 +929,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
           if (winEffect.message) specialCardMessages.push(winEffect.message);
         } else if (handOutcome === 'lose') {
           newChips -= bet;
+
+          // Boss special rule: The Shark - Extra chip loss on loss
+          const { bossActive, currentBoss } = get();
+          if (bossActive && currentBoss?.extraChipLossOnLoss) {
+            newChips -= currentBoss.extraChipLossOnLoss;
+            specialCardMessages.push(`Blood in the Water! -${currentBoss.extraChipLossOnLoss} extra chips!`);
+          }
 
           // Trigger onLose effects for this split hand
           const loseEffect = triggerOnLoseEffects(splitState.hands[i], {
@@ -935,6 +1015,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
           newChips -= currentBet;
         }
 
+        // Boss special rule: The Shark - Extra chip loss on loss
+        const { bossActive, currentBoss } = get();
+        if (bossActive && currentBoss?.extraChipLossOnLoss) {
+          newChips -= currentBoss.extraChipLossOnLoss;
+          specialCardMessages.push(`Blood in the Water! -${currentBoss.extraChipLossOnLoss} extra chips!`);
+        }
+
         // Trigger onLose effects
         const loseEffect = triggerOnLoseEffects(playerHand, {
           chips: newChips,
@@ -992,7 +1079,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   // Reset for next hand
   resetHand: () => {
-    const { chips, lastBet, activeDeckId, deck: currentDeck, runStats } = get();
+    const { chips, lastBet, activeDeckId, deck: currentDeck, runStats, bossActive, currentBoss, dealerDeck: bossDealerDeck } = get();
     if (chips === 0) {
       // Game over - update meta stats
       get().updateMetaStats(runStats);
@@ -1007,8 +1094,21 @@ export const useGameStore = create<GameStore>((set, get) => ({
       ? generateStarterDeck(activeDeckId)
       : shuffle([...currentDeck]);
 
+    // Boss fights: Regenerate boss deck if it's running low
+    let newDealerDeck = bossDealerDeck;
+    if (bossActive && currentBoss) {
+      if (bossDealerDeck.length < 4) {
+        // Boss deck running low - reshuffle the boss's premade deck
+        newDealerDeck = shuffle([...currentBoss.deck]);
+      } else {
+        // Just shuffle existing boss deck
+        newDealerDeck = shuffle([...bossDealerDeck]);
+      }
+    }
+
     set({
       deck: newDeck,
+      dealerDeck: newDealerDeck,
       playerHand: [],
       dealerHand: [],
       currentBet: 0,
@@ -1956,10 +2056,24 @@ export const useGameStore = create<GameStore>((set, get) => ({
       return;
     }
 
+    // Set up boss's premade deck (shuffle it for fairness)
+    const bossDeck = shuffle([...boss.deck]);
+
+    // Apply starting chip penalty if applicable (e.g., The House)
+    const { chips } = get();
+    const newChips = boss.startingChipPenalty
+      ? chips - boss.startingChipPenalty
+      : chips;
+
     set({
       currentBoss: boss,
       bossActive: true,
+      dealerDeck: bossDeck,
+      chips: newChips,
       screen: 'bossIntro',
+      message: boss.startingChipPenalty
+        ? `The House takes ${boss.startingChipPenalty} chips upfront!`
+        : '',
     });
   },
 
