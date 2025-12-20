@@ -31,12 +31,12 @@ export default function GameBoard() {
   const theme = getDeckTheme(activeDeckId);
 
   return (
-    <div className={`min-h-screen bg-gradient-to-b ${theme.bgGradient} flex flex-col pb-20 lg:pb-0`}>
+    <div className={`min-h-screen bg-gradient-to-b ${theme.bgGradient} flex flex-col pb-32 lg:pb-0`}>
       {/* Header with Stage Progress */}
       <StageHeader />
 
       {/* Main Game Area */}
-      <main className="flex-1 flex flex-col items-center justify-between py-4 sm:py-8 px-2 sm:px-4 gap-4 sm:gap-8">
+      <main className="flex-1 flex flex-col items-center justify-between py-4 sm:py-8 px-2 sm:px-4 gap-4 sm:gap-8 mb-4 lg:mb-0">
         {/* Dealer Area */}
         <div className="w-full max-w-5xl">
           <Hand

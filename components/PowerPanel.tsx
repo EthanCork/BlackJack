@@ -44,11 +44,11 @@ export function PowerPanel() {
       </div>
 
       {/* Mobile/Tablet: Bottom horizontal panel */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 to-transparent p-2 z-10">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/80 to-transparent pt-3 pb-safe z-10 border-t border-casino-gold-dark/30">
         <div className="text-xs font-bold text-casino-gold text-center mb-1">
           POWERS
         </div>
-        <div className="flex gap-2 overflow-x-auto pb-2 px-2">
+        <div className="flex gap-2 overflow-x-auto pb-2 px-2 scrollbar-hide">
           {equippedPowers.map((powerId) => {
             const power = POWER_POOL[powerId];
             if (!power) return null;
@@ -56,7 +56,7 @@ export function PowerPanel() {
             const canUse = canUsePower(powerId);
 
             return (
-              <div key={powerId} className="flex-shrink-0 w-48">
+              <div key={powerId} className="flex-shrink-0 w-44">
                 <PowerCard
                   power={power}
                   isEquipped

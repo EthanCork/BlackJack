@@ -21,3 +21,13 @@
 button {
   touch-action: manipulation;
 }
+
+/* Hide scrollbar while maintaining functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
