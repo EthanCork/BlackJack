@@ -44,29 +44,29 @@ export default function Lobby({ onSelectDeck, lastPlayedDeck }: LobbyProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-black to-gray-900 text-white flex flex-col items-center justify-center p-8">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-black to-gray-900 text-white flex flex-col items-center justify-center p-4 sm:p-8">
       {/* Header */}
-      <div className="text-center mb-12">
-        <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
+      <div className="text-center mb-6 sm:mb-12">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-4 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
           THE LOBBY
         </h1>
-        <p className="text-2xl text-gray-400 italic">Build Your Foundation</p>
+        <p className="text-lg sm:text-xl md:text-2xl text-gray-400 italic">Build Your Foundation</p>
         {lastPlayedDeck && (
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-xs sm:text-sm text-gray-500 mt-2">
             Last played: {allDecks.find(d => d.id === lastPlayedDeck)?.name}
           </p>
         )}
       </div>
 
       {/* Dust Display */}
-      <div className="mb-6 text-center">
-        <div className="inline-block px-6 py-3 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full border-2 border-yellow-400">
-          <span className="text-2xl font-bold text-white">✨ {dust} Dust</span>
+      <div className="mb-4 sm:mb-6 text-center">
+        <div className="inline-block px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full border-2 border-yellow-400">
+          <span className="text-lg sm:text-xl md:text-2xl font-bold text-white">✨ {dust} Dust</span>
         </div>
       </div>
 
-      {/* Deck Pedestals */}
-      <div className="grid grid-cols-5 gap-6 mb-12 max-w-7xl">
+      {/* Deck Pedestals - Responsive Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6 mb-8 sm:mb-12 w-full max-w-7xl px-2 sm:px-0">
         {allDecks.map((deck) => (
           <DeckPedestal
             key={deck.id}

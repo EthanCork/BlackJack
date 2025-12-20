@@ -14,13 +14,14 @@ export default function DeckPedestal({ deck, isSelected, isLocked = false, onCli
     <button
       onClick={onClick}
       className={`
-        relative w-40 h-56 rounded-lg p-4
+        relative w-full sm:w-40 h-48 sm:h-56 rounded-lg p-3 sm:p-4
         transition-all duration-300 transform
         ${isSelected
-          ? 'scale-110 ring-4 ring-white shadow-2xl'
-          : 'hover:scale-105 hover:shadow-xl'
+          ? 'scale-105 sm:scale-110 ring-4 ring-white shadow-2xl'
+          : 'hover:scale-105 hover:shadow-xl active:scale-95'
         }
         ${isLocked ? 'opacity-60' : ''}
+        touch-manipulation
       `}
       style={{
         background: `linear-gradient(135deg, ${deck.colorTheme.primary} 0%, ${deck.colorTheme.secondary} 100%)`,
@@ -29,21 +30,21 @@ export default function DeckPedestal({ deck, isSelected, isLocked = false, onCli
       {/* Lock Overlay */}
       {isLocked && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg">
-          <div className="text-6xl">🔒</div>
+          <div className="text-5xl sm:text-6xl">🔒</div>
         </div>
       )}
       {/* Icon */}
-      <div className="text-6xl mb-2 text-center">
+      <div className="text-5xl sm:text-6xl mb-2 text-center">
         {deck.icon}
       </div>
 
       {/* Name */}
-      <h3 className="text-sm font-bold text-center mb-2 text-white drop-shadow-md">
+      <h3 className="text-sm sm:text-base font-bold text-center mb-2 text-white drop-shadow-md">
         {deck.name}
       </h3>
 
       {/* Quick Stats */}
-      <div className="text-xs text-white/90 space-y-1">
+      <div className="text-xs sm:text-sm text-white/90 space-y-1">
         <div className="flex justify-between">
           <span>Cards:</span>
           <span className="font-bold">{deck.deckSize}</span>
