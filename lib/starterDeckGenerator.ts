@@ -105,7 +105,7 @@ function createCard(rank: Rank, suit: Suit): Card {
     suit,
     rank,
     value,
-    faceUp: true,
+    faceUp: false,
   };
 }
 
