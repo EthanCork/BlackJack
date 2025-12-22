@@ -41,17 +41,18 @@ export default function DeckPreview({ deckId, onClose, onConfirm }: DeckPreviewP
 
   return (
     <div
-      className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-8 overflow-y-auto"
+      className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-8"
       onClick={onClose}
     >
       <div
-        className="max-w-4xl w-full rounded-xl shadow-2xl p-4 sm:p-8 relative my-auto max-h-[90vh] overflow-y-auto"
+        className="max-w-4xl w-full rounded-xl shadow-2xl relative max-h-[90vh] overflow-y-auto flex flex-col"
         style={{
           background: `linear-gradient(135deg, ${deck.colorTheme.primary}20 0%, ${deck.colorTheme.secondary}20 100%)`,
           border: `2px solid ${deck.colorTheme.primary}`,
         }}
         onClick={(e) => e.stopPropagation()}
       >
+        <div className="p-4 sm:p-8 overflow-y-auto flex-1">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -189,6 +190,7 @@ export default function DeckPreview({ deckId, onClose, onConfirm }: DeckPreviewP
           }`}>
             {deck.difficulty.toUpperCase()}
           </span>
+        </div>
         </div>
       </div>
     </div>
