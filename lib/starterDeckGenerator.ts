@@ -15,19 +15,20 @@ export function generateStarterDeck(deckId: StarterDeckId): Card[] {
     case 'grinder':
       // The Grinder: 14 cards - 2x (2,3,4,5,6,7,A)
       const grinderRanks: Rank[] = ['2', '3', '4', '5', '6', '7', 'A'];
-      grinderRanks.forEach(rank => {
-        // Add 2 copies of each rank
-        cards.push(createCard(rank, suits[0]));
-        cards.push(createCard(rank, suits[1]));
+      grinderRanks.forEach((rank, idx) => {
+        // Add 2 copies of each rank, alternating suits for variety
+        cards.push(createCard(rank, suits[idx % 4]));
+        cards.push(createCard(rank, suits[(idx + 2) % 4]));
       });
       break;
 
     case 'highRoller':
       // The High Roller: 12 cards - 2x (9,10,J,Q,K,A)
       const highRollerRanks: Rank[] = ['9', '10', 'J', 'Q', 'K', 'A'];
-      highRollerRanks.forEach(rank => {
-        cards.push(createCard(rank, suits[0]));
-        cards.push(createCard(rank, suits[1]));
+      highRollerRanks.forEach((rank, idx) => {
+        // Add 2 copies of each rank, alternating suits for variety
+        cards.push(createCard(rank, suits[idx % 4]));
+        cards.push(createCard(rank, suits[(idx + 2) % 4]));
       });
       break;
 
@@ -39,25 +40,26 @@ export function generateStarterDeck(deckId: StarterDeckId): Card[] {
       });
       // 2 copies each of 5, 6, 10, K
       const aceHunterRanks: Rank[] = ['5', '6', '10', 'K'];
-      aceHunterRanks.forEach(rank => {
-        cards.push(createCard(rank, suits[0]));
-        cards.push(createCard(rank, suits[1]));
+      aceHunterRanks.forEach((rank, idx) => {
+        // Alternate suits for variety
+        cards.push(createCard(rank, suits[idx % 4]));
+        cards.push(createCard(rank, suits[(idx + 2) % 4]));
       });
       break;
 
     case 'gambler':
       // The Gambler: 14 cards - standard mix + 2 Wild + 2 Golden
-      // Standard cards: 2,7,7,8,8,10,10,J,A,A (10 cards)
+      // Standard cards: 2,7,7,8,8,10,10,J,A,A (10 cards) - use variety of suits
       cards.push(createCard('2', suits[0]));
-      cards.push(createCard('7', suits[0]));
       cards.push(createCard('7', suits[1]));
+      cards.push(createCard('7', suits[2]));
+      cards.push(createCard('8', suits[3]));
       cards.push(createCard('8', suits[0]));
-      cards.push(createCard('8', suits[1]));
-      cards.push(createCard('10', suits[0]));
       cards.push(createCard('10', suits[1]));
-      cards.push(createCard('J', suits[0]));
+      cards.push(createCard('10', suits[2]));
+      cards.push(createCard('J', suits[3]));
       cards.push(createCard('A', suits[0]));
-      cards.push(createCard('A', suits[1]));
+      cards.push(createCard('A', suits[2]));
 
       // Special cards: 2 Wild + 2 Golden (4 cards)
       cards.push(...createWildCards(2));
@@ -68,18 +70,20 @@ export function generateStarterDeck(deckId: StarterDeckId): Card[] {
       // The Foundation: 16 cards - balanced mix
       // 2x (3,5,6,7,9,10,Q,A)
       const foundationRanks: Rank[] = ['3', '5', '6', '7', '9', '10', 'Q', 'A'];
-      foundationRanks.forEach(rank => {
-        cards.push(createCard(rank, suits[0]));
-        cards.push(createCard(rank, suits[1]));
+      foundationRanks.forEach((rank, idx) => {
+        // Alternate suits for variety
+        cards.push(createCard(rank, suits[idx % 4]));
+        cards.push(createCard(rank, suits[(idx + 2) % 4]));
       });
       break;
 
     default:
       // Fallback to Foundation if unknown deck
       const defaultRanks: Rank[] = ['3', '5', '6', '7', '9', '10', 'Q', 'A'];
-      defaultRanks.forEach(rank => {
-        cards.push(createCard(rank, suits[0]));
-        cards.push(createCard(rank, suits[1]));
+      defaultRanks.forEach((rank, idx) => {
+        // Alternate suits for variety
+        cards.push(createCard(rank, suits[idx % 4]));
+        cards.push(createCard(rank, suits[(idx + 2) % 4]));
       });
   }
 

@@ -32,26 +32,26 @@ function createBossCard(rank: Card['rank'], suit: Card['suit']): Card {
 const PIT_BOSS_DECK: Card[] = [
   // 6s (2 cards)
   createBossCard('6', 'spades'),
-  createBossCard('6', 'hearts'),
+  createBossCard('6', 'diamonds'),
   // 7s (3 cards)
-  createBossCard('7', 'spades'),
   createBossCard('7', 'hearts'),
+  createBossCard('7', 'clubs'),
   createBossCard('7', 'diamonds'),
   // 8s (3 cards)
   createBossCard('8', 'spades'),
   createBossCard('8', 'hearts'),
-  createBossCard('8', 'diamonds'),
+  createBossCard('8', 'clubs'),
   // 9s (2 cards)
-  createBossCard('9', 'spades'),
-  createBossCard('9', 'hearts'),
+  createBossCard('9', 'diamonds'),
+  createBossCard('9', 'clubs'),
   // 10s (4 cards)
   createBossCard('10', 'spades'),
   createBossCard('10', 'hearts'),
   createBossCard('10', 'diamonds'),
   createBossCard('10', 'clubs'),
   // Aces (2 cards)
-  createBossCard('A', 'spades'),
   createBossCard('A', 'hearts'),
+  createBossCard('A', 'clubs'),
 ];
 
 // ============================================================================
@@ -60,25 +60,25 @@ const PIT_BOSS_DECK: Card[] = [
 
 const SHARK_DECK: Card[] = [
   // 9s (2 cards)
-  createBossCard('9', 'spades'),
-  createBossCard('9', 'hearts'),
+  createBossCard('9', 'clubs'),
+  createBossCard('9', 'diamonds'),
   // 10s (3 cards)
   createBossCard('10', 'spades'),
   createBossCard('10', 'hearts'),
-  createBossCard('10', 'diamonds'),
+  createBossCard('10', 'clubs'),
   // Jacks (3 cards)
-  createBossCard('J', 'spades'),
-  createBossCard('J', 'hearts'),
   createBossCard('J', 'diamonds'),
+  createBossCard('J', 'hearts'),
+  createBossCard('J', 'spades'),
   // Queens (2 cards)
-  createBossCard('Q', 'spades'),
-  createBossCard('Q', 'hearts'),
+  createBossCard('Q', 'clubs'),
+  createBossCard('Q', 'diamonds'),
   // Kings (2 cards)
-  createBossCard('K', 'spades'),
   createBossCard('K', 'hearts'),
+  createBossCard('K', 'spades'),
   // Aces (2 cards)
-  createBossCard('A', 'spades'),
-  createBossCard('A', 'hearts'),
+  createBossCard('A', 'clubs'),
+  createBossCard('A', 'diamonds'),
 ];
 
 // ============================================================================
@@ -87,25 +87,25 @@ const SHARK_DECK: Card[] = [
 
 const HOUSE_DECK: Card[] = [
   // 4s (2 cards)
-  createBossCard('4', 'spades'),
-  createBossCard('4', 'hearts'),
+  createBossCard('4', 'diamonds'),
+  createBossCard('4', 'clubs'),
   // 6s (2 cards)
-  createBossCard('6', 'spades'),
   createBossCard('6', 'hearts'),
+  createBossCard('6', 'spades'),
   // 7s (2 cards)
-  createBossCard('7', 'spades'),
-  createBossCard('7', 'hearts'),
+  createBossCard('7', 'diamonds'),
+  createBossCard('7', 'clubs'),
   // 9s (2 cards)
-  createBossCard('9', 'spades'),
   createBossCard('9', 'hearts'),
+  createBossCard('9', 'spades'),
   // 10s (4 cards)
   createBossCard('10', 'spades'),
   createBossCard('10', 'hearts'),
   createBossCard('10', 'diamonds'),
   createBossCard('10', 'clubs'),
   // Jacks (2 cards)
-  createBossCard('J', 'spades'),
-  createBossCard('J', 'hearts'),
+  createBossCard('J', 'diamonds'),
+  createBossCard('J', 'clubs'),
   // Aces (4 cards)
   createBossCard('A', 'spades'),
   createBossCard('A', 'hearts'),
