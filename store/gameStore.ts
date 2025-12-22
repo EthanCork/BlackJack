@@ -435,7 +435,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // During boss fights, dealer draws from their own deck
     const { bossActive, dealerDeck: bossDealerDeck, currentBoss } = get();
-    let dealerDeck = bossActive ? [...bossDealerDeck] : [...deck];
+    let dealerDeck = bossActive ? [...bossDealerDeck] : deck; // Non-boss: use same deck, not a copy
 
     // Deal initial cards
     const playerCard1 = drawCard(deck)!;
