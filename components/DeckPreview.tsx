@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { StarterDeckId, StarterDeck } from '@/types/starterDecks';
 import { getStarterDeck } from '@/data/starterDeckPool';
 import { getDeckStatistics } from '@/lib/starterDeckGenerator';
@@ -20,6 +20,14 @@ export default function DeckPreview({ deckId, onClose, onConfirm }: DeckPreviewP
   const deck = getStarterDeck(deckId);
   const isLocked = !deckUnlocks[deckId]?.unlocked;
   const unlockReq = DECK_UNLOCK_REQUIREMENTS[deckId];
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
 
   const handleUnlock = () => {
     if (unlockDeckWithDust(deckId)) {
